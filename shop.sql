@@ -1,14 +1,3 @@
--- 用户表
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL DEFAULT '',
-  `mobile` varchar(20) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- 商品表 --
 DROP TABLE IF EXISTS `goods`;
 CREATE TABLE `goods` (
@@ -19,11 +8,10 @@ CREATE TABLE `goods` (
   `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '价格',
   `primary_pic_url` varchar(255) NOT NULL COMMENT '商品主图',
   `stock` int(11) NOT NULL COMMENT '库存',
-  `version` int(11) NOT NULL COMMENT '版本号',
   `created_at` bigint NOT NULL DEFAULT '0',
   `update_at` bigint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-  KEY `name` (`index_name`)
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 商品表记录

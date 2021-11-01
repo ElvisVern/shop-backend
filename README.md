@@ -55,16 +55,23 @@
 
 ### 本地开发环境配置
 
-+ 创建数据库shop并导入项目根目录下的shop.sql
++ 创建数据库shop
 ```
 CREATE SCHEMA `shop` DEFAULT CHARACTER SET utf8mb4;
 ```
++ 导入项目根目录下的shop.sql
+
 + 更改数据库配置
   .env
 + 数据库迁移
   ```
   node ace migration:run
   ```
++ 添加默认管理员用户
+```
+INSERT INTO `users` VALUES (1, 'than', '$argon2id$v=19$t=3,m=4096,p=1$9xAYkPKYFMMy2kBWguc5Dg$9LZhoGoY+M/NqEg38NQpYM7/pm57HRER1N/nrLJmcaw', 18664364305, 1, 0);
+
+```
 + 安装依赖并启动
 ```
 yarn install
