@@ -2,15 +2,16 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { ApiException } from 'App/Exceptions/ApiExceptions';
 import Order from 'App/Models/Order';
 import apiResponse from 'App/Services/ApiResponse';
-import RedisService from 'App/Services/RedisService';
+import RedisUtil from 'App/Utils/Redis/RedisUtil';
 import UtilService from 'App/Services/UtilService';
 import { ActionResult, OrderStatusEnum } from '../Enums';
 import { v4 as uuid } from "uuid";
 import Good from 'App/Models/Good';
-import Redis from '@ioc:Adonis/Addons/Redis';
+// import Redis from '@ioc:Adonis/Addons/Redis';
 import { lock, unlock, stock } from 'App/Utils/Sctipts';
 import Database from '@ioc:Adonis/Lucid/Database';
 import Event from '@ioc:Adonis/Core/Event'
+import CacheService from '@ioc:App/CacheService';
 
 export default class OrderController {
 
@@ -26,16 +27,16 @@ export default class OrderController {
     const userId = String(auth.user!.id);
 
     // 判断商品是否存在
-    const stockNum = await RedisService.getGoodsById(goodsId);
+    const stockNum = await RedisUtil.getGoodsById(goodsId);
     if (!stockNum) return new ApiException(422, this.goodsIsNullOrNotEnoughMessage);
 
     // 加锁，限制一个用户3秒内只能购买一次
     const expireTime = 3;
     const lockKey = `lock:${userId}:${goodsId}`;
-    await Redis.eval(lock, 2, [lockKey, 'releaseTime', uuid(), expireTime]);
+    await CacheService.eval(lock, 2, [lockKey, 'releaseTime', uuid(), expireTime]);
     try {
       // 扣库存
-      const count = await Redis.eval(stock, 1, [`good_${goodsId}`, '']);
+      const count = await CacheService.eval(stock, 1, [`good_${goodsId}`, '']);
       if (count <= 0) {
         return new ApiException(501, this.goodsIsNotEnoughMessage);
       }
@@ -47,7 +48,7 @@ export default class OrderController {
       Event.emit('notify:diliver_goods', order);
     } catch (error) {
       // 解锁
-      await Redis.eval(unlock, 1, [lockKey, uuid]);
+      await CacheService.eval(unlock, 1, [lockKey, uuid]);
       return new ApiException(501, this.goodsIsNotEnoughMessage);
     }
     return apiResponse(response, ActionResult.Success);

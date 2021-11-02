@@ -5,7 +5,7 @@ import User from "App/Models/User";
 import apiResponse from "App/Services/ApiResponse";
 import UtilService from "App/Services/UtilService";
 import { CreateUserValidator } from "App/Validators/UserValidator";
-
+import CacheService from '@ioc:App/CacheService';
 export default class AuthController {
   public async login({ request, response, auth }: HttpContextContract) {
 
@@ -38,5 +38,10 @@ export default class AuthController {
     user.createdAt = UtilService.getUnixTimeNow();
     await user.save();
     Logger.info({ user: user.id }, "User register successfully");
+  }
+
+  public async test() {
+    const data = await CacheService.get('foo');
+    console.log(data);
   }
 }

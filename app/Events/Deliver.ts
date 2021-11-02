@@ -17,7 +17,7 @@ export default class Deliver {
       // 这里可以发送到 MQ 失败自动重试两次
     } catch (error) {
       // 这里抛出异常实现自动重试处理
-      throw new Error(error);
+      // throw new Error(error);
     }
   }
 }

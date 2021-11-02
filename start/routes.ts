@@ -27,6 +27,8 @@ Route.get('/', async () => {
 Route.group(() => {
   Route.post("login", "AuthController.login");
   Route.post("register", "AuthController.register");
+  Route.get("test", "AuthController.test");
+
   Route.group(() => {
     Route.get("goods", "GoodsController.list");
     Route.post("goods/add", "GoodsController.add");

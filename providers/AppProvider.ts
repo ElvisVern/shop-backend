@@ -1,11 +1,16 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-
+import CacheService from 'App/Services/CacheService';
+import RedisCacheService from 'App/Services/RedisCacheService';
 export default class AppProvider {
   constructor(protected app: ApplicationContract) {
   }
 
   public register() {
     // Register your own bindings
+    const redisCache = new RedisCacheService();
+    this.app.container.singleton('App/CacheService', () => {
+      return new CacheService(redisCache);
+    });
   }
 
   public async boot() {
@@ -15,11 +20,11 @@ export default class AppProvider {
   public async ready() {
     // App is ready
     // 初始化 商品数据到 Redis
-    const RedisService = await (await import('App/Services/RedisService')).default;
-    RedisService.initGoods();
+    const RedisUtil = await (await import('App/Utils/Redis/RedisUtil')).default;
+    RedisUtil.initGoods();
 
-    const CpuOverload = await (await import('App/Middleware/CpuOverload')).default;
-    new CpuOverload().check();
+    // const CpuOverload = await (await import('App/Middleware/CpuOverload')).default;
+    // new CpuOverload().check();
   }
 
   public async shutdown() {

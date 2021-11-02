@@ -6,7 +6,7 @@ import apiResponse from 'App/Services/ApiResponse';
 import { ActionResult } from '../Enums';
 import { CreateGoodsValidator } from 'App/Validators/GoodsValidator';
 import UtilService from 'App/Services/UtilService';
-import RedisService from 'App/Services/RedisService';
+import RedisUtil from 'App/Utils/Redis/RedisUtil';
 
 export default class GoodsController {
   /**
@@ -28,7 +28,7 @@ export default class GoodsController {
 
     await good.save();
     // 更新Redis库存
-    await RedisService.updateStock(good.goodsId, good.stock);
+    await RedisUtil.updateStock(good.goodsId, good.stock);
     return apiResponse(response, ActionResult.Success);
   }
 
