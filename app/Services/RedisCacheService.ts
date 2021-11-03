@@ -16,7 +16,7 @@ export default class RedisCacheService implements Cache {
       this.redis = RedisCacheService.getCache(key);
       console.log(RedisCacheService.redisCacheMap);
     } else {
-      const str = `server connecting redis:// ${config?.host ?? '127.0.0.1'}:${config?.port ?? 6379} ${config?.db ?? 0}`;
+      const str = `server connecting redis:// ${config?.host ?? '127.0.0.1'}:${config?.port ?? 6379} ${config?.db ?? 0} ${config?.password ?? ''}`;
       this.redis = new Redis(config)
       this.redis.on('connect', () => {
         Logger.info(str);
